@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cart – Symphonic Press</title>
+  <meta name="description" content="Sell and deliver digital PDF scores and parts for symphonic band – festival marches, lyrical works, and openers for developing ensembles.">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="assets/logo.svg">
+</head>
+<body>
+
+    <nav>
+      <div class="navbar container">
+        <div style="display:flex;align-items:center;gap:12px">
+          <a href="index.html" style="display:flex;align-items:center;gap:10px">
+            <img src="assets/logo.svg" alt="" width="120" height="28" aria-hidden="true">
+            <span class="visually-hidden">Symphonic Press</span>
+          </a>
+          <span class="badge">Band Publisher</span>
+        </div>
+        <div class="navlinks">
+          <a href="catalog.html">Catalog</a>
+          <a href="license.html">Licensing</a>
+          <a href="contact.html">Contact</a>
+          <a href="cart.html" aria-label="Cart">🛒 <span id="cart-count" class="badge" style="display:none;margin-left:6px">0</span></a>
+        </div>
+      </div>
+    </nav>
+    
+
+<section class="container">
+  <div class="card pad">
+    <h1>Your Cart</h1>
+    <table id="tbl"><thead><tr><th>Item</th><th>Price</th><th>Qty</th><th>Line</th><th></th></tr></thead><tbody></tbody></table>
+    <div style="text-align:right;margin-top:10px"><strong>Total: <span id="total">$0.00</span></strong></div>
+    <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:10px">
+      <a class="btn" href="catalog.html" style="background:#1f2937">Continue Shopping</a>
+      <a class="btn" href="checkout.html">Checkout</a>
+    </div>
+  </div>
+</section>
+<script>
+(async function(){
+  const ps = await Store.loadProducts();
+  const cart = Store.getCart();
+  const tb = document.querySelector('#tbl tbody'); tb.innerHTML='';
+  let total=0;
+  cart.forEach(it=>{ const p = ps.find(x=>x.id===it.id); if(!p) return;
+    const line = p.price * it.qty; total += line;
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td><a href="product.html?id=${p.id}">${p.title}</a></td><td>$${p.price.toFixed(2)}</td>
+      <td><input type="number" min="1" value="${it.qty}" style="width:70px"></td><td>$${line.toFixed(2)}</td>
+      <td><button class="btn" style="background:#1f2937" data-r="${p.id}">Remove</button></td>`;
+    tb.appendChild(tr);
+    tr.querySelector('input').onchange = (e)=>{ it.qty = Math.max(1, parseInt(e.target.value||'1',10)); Store.saveCart(cart); location.reload(); }
+    tr.querySelector('button[data-r]').onclick = ()=>{ Store.removeFromCart(p.id); location.reload(); }
+  });
+  document.getElementById('total').textContent = '$'+total.toFixed(2);
+  Store.saveCart(cart);
+})();
+</script>
+
+<footer class="footer">
+  <div class="container">
+    <div class="grid cols-3">
+      <div>
+        <img src="assets/logo.svg" alt="" width="140" height="32" aria-hidden="true"><br>
+        <div class="kicker">© 2025 Symphonic Press. All rights reserved.</div>
+      </div>
+      <div>
+        <strong>Quick Links</strong><br>
+        <a href="catalog.html">Catalog</a><br>
+        <a href="license.html">Licensing</a><br>
+        <a href="contact.html">Contact</a>
+      </div>
+      <div>
+        <strong>Educator Promise</strong>
+        <p style="color:var(--muted)">Clear ranges, helpful cues, playable percussion, and full score/parts delivered instantly as PDFs.</p>
+      </div>
+    </div>
+  </div>
+</footer>
+<script src="app.js"></script>
+</body>
+</html>

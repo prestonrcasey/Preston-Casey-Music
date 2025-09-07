@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Product – Symphonic Press</title>
+  <meta name="description" content="Sell and deliver digital PDF scores and parts for symphonic band – festival marches, lyrical works, and openers for developing ensembles.">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="assets/logo.svg">
+</head>
+<body>
+
+    <nav>
+      <div class="navbar container">
+        <div style="display:flex;align-items:center;gap:12px">
+          <a href="index.html" style="display:flex;align-items:center;gap:10px">
+            <img src="assets/logo.svg" alt="" width="120" height="28" aria-hidden="true">
+            <span class="visually-hidden">Symphonic Press</span>
+          </a>
+          <span class="badge">Band Publisher</span>
+        </div>
+        <div class="navlinks">
+          <a href="catalog.html">Catalog</a>
+          <a href="license.html">Licensing</a>
+          <a href="contact.html">Contact</a>
+          <a href="cart.html" aria-label="Cart">🛒 <span id="cart-count" class="badge" style="display:none;margin-left:6px">0</span></a>
+        </div>
+      </div>
+    </nav>
+    
+
+<section class="container">
+  <div id="product" class="card pad">Loading…</div>
+</section>
+<script>
+(async function(){
+  const id = new URL(location).searchParams.get('id');
+  const ps = await Store.loadProducts();
+  const p = ps.find(x=>x.id===id) || ps[0];
+  document.title = p.title + " – Symphonic Press";
+  document.getElementById('product').innerHTML = `
+    <div class="grid cols-2">
+      <div>
+        <img src="${p.cover}" alt="" style="width:100%;border-radius:12px">
+        <audio controls src="${p.audio}" style="margin-top:12px;width:100%"></audio>
+      </div>
+      <div>
+        <h1>${p.title}</h1>
+        <div class="kicker">${p.composer} • Grade ${p.grade} • ${p.duration} • ${p.style||''}</div>
+        <p>${p.description}</p>
+        <p><strong>Price:</strong> $${p.price.toFixed(2)}</p>
+        <div style="display:flex;gap:10px">
+          <button class="btn" id="add">Add to Cart</button>
+          <a class="btn" href="cart.html" style="background:#1f2937">View Cart</a>
+        </div>
+        <h3>Instrumentation</h3>
+        <ul>${(p.instrumentation||[]).map(i=>`<li>${i}</li>`).join('')}</ul>
+      </div>
+    </div>`;
+  document.getElementById('add').onclick=()=>Store.addToCart(p.id,1);
+})();
+</script>
+
+<footer class="footer">
+  <div class="container">
+    <div class="grid cols-3">
+      <div>
+        <img src="assets/logo.svg" alt="" width="140" height="32" aria-hidden="true"><br>
+        <div class="kicker">© 2025 Symphonic Press. All rights reserved.</div>
+      </div>
+      <div>
+        <strong>Quick Links</strong><br>
+        <a href="catalog.html">Catalog</a><br>
+        <a href="license.html">Licensing</a><br>
+        <a href="contact.html">Contact</a>
+      </div>
+      <div>
+        <strong>Educator Promise</strong>
+        <p style="color:var(--muted)">Clear ranges, helpful cues, playable percussion, and full score/parts delivered instantly as PDFs.</p>
+      </div>
+    </div>
+  </div>
+</footer>
+<script src="app.js"></script>
+</body>
+</html>
